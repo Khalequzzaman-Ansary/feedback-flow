@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { Status } from "@prisma/client"
+import { redirect } from "next/navigation"
 
 // Validation Schema
 const postSchema = z.object({
@@ -13,7 +14,7 @@ const postSchema = z.object({
   description: z.string().min(10),
 })
 
-export async function createPost(formData: FormData) {
+export async function createPost(projectId: string, formData: FormData) {
   const session = await auth()
   if (!session?.user) throw new Error("Unauthorized")
 
@@ -38,13 +39,32 @@ export async function createPost(formData: FormData) {
       title,
       description,
       category,
+      projectId,
       slug,
       userId: session.user.id!,
     },
   })
 
-  revalidatePath("/") // Refresh the home page to show the new post
+  revalidatePath(`/project/${projectId}`)
   return { success: true }
+}
+
+export async function createProject(formData: FormData) {
+  const session = await auth()
+  const name = formData.get("name") as string
+  const slug = formData.get("slug") as string
+
+  if (!session?.user || !name || !slug) return
+
+  const project = await prisma.project.create({
+    data: {
+      name,
+      slug,
+      userId: session.user.id!,
+    },
+  })
+
+  redirect(`/project/${project.id}`)
 }
 
 export async function toggleVote(postId: string) {

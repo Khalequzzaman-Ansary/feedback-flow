@@ -13,11 +13,11 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea" // We need to install this
 import { createPost } from "@/app/actions"
 
-export function CreatePostModal() {
+export function CreatePostModal({ projectId }: { projectId: string }) {
     const [open, setOpen] = useState(false)
 
     async function handleSubmit(formData: FormData) {
-        await createPost(formData)
+        await createPost(projectId, formData)
         setOpen(false) // Close modal on success
     }
 

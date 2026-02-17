@@ -29,10 +29,22 @@ model User {
   role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]
+  projects      Project[] /* Relation: User owns these projects */
   posts         Post[]
   votes         Vote[]
   comments      Comment[]
   createdAt     DateTime  @default(now())
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique // For professional URLs
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  posts     Post[]  /* Relation: Project has many posts */
 }
 
 model Post {
@@ -47,6 +59,10 @@ model Post {
 
   userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /* Link Post to Project */
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   votes       Vote[]
   comments    Comment[]
