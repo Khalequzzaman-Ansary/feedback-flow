@@ -60,8 +60,7 @@ export default async function Home({
       {/* Header Section */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold">Feedback Board</h1>
-          <p className="text-muted-foreground">Suggest features and vote on ideas.</p>
+          <p className="text-muted-foreground text-xl font-medium">Suggest features and vote on ideas.</p>
         </div>
         <CreatePostModal />
       </div>

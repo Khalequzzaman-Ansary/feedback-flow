@@ -4,6 +4,7 @@ import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { Status } from "@prisma/client"
 
 // Validation Schema
 const postSchema = z.object({
@@ -105,5 +106,20 @@ export async function addComment(postId: string, formData: FormData) {
   })
 
   revalidatePath(`/post/${postId}`) // Refresh the page to show new comment
+  return { success: true }
+}
+
+export async function updateStatus(postId: string, newStatus: Status) {
+  const session = await auth()
+  
+  if (!session?.user) throw new Error("Unauthorized")
+
+  await prisma.post.update({
+    where: { id: postId },
+    data: { status: newStatus },
+  })
+
+  revalidatePath("/") // Update the home page filters
+  revalidatePath(`/post/${postId}`) // Update the details page
   return { success: true }
 }

@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { addComment } from "@/app/actions"
+import { StatusSelector } from "@/components/status-selector"
 
 // 1. Update the type definition to wrap params in Promise
 export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
@@ -42,8 +43,11 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
                     initialVotes={post._count.votes}
                     initialHasVoted={post.votes.length > 0}
                 />
-                <div>
-                    <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
+                <div className="flex-1">
+                    <div className="flex justify-between items-start mb-2">
+                        <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
+                        <StatusSelector postId={post.id} initialStatus={post.status} />
+                    </div>
                     <p className="text-muted-foreground mb-4 whitespace-pre-wrap">{post.description}</p>
                     <div className="flex items-center gap-2 text-sm text-gray-500">
                         <Avatar className="w-6 h-6">
@@ -55,6 +59,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
                         <span>{new Date(post.createdAt).toLocaleDateString()}</span>
                     </div>
                 </div>
+
             </div>
 
             <hr className="my-8" />
